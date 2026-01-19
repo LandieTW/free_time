@@ -85,4 +85,31 @@ print('Friend of friend suggestions:', friend_of_friend_suggestions)
 
 # How many friends in common do the users have?
 
+friends_in_common = defaultdict()
 
+for user in users:
+
+    user_friends = [friendships[i][1] 
+                    for i in range(len(friendships))
+                    if friendships[i][0] == user['id']] \
+                        + \
+                    [friendships[i][0]
+                    for i in range(len(friendships))
+                    if friendships[i][1] == user['id']]
+    
+    user_friends = set(user_friends)
+
+    friends = {
+        users[i]['id']: len(set(
+            friendship for friendship in friendships
+            if friendship[0] in user_friends 
+                or friendship[1]  in user_friends
+        ))
+        for i in range(len(users))
+        }
+
+    friends_in_common[user['id']] = friends
+
+print('Number of friends in common between users:')
+for user_id, common_friends in friends_in_common.items():
+    print(f'User {user_id}: {common_friends}')
