@@ -1,4 +1,7 @@
 
+from collections import defaultdict
+
+
 users = [
     {"id": 0, "name": "Hero"},
     {"id": 1, "name": "Dunn"},
@@ -51,4 +54,35 @@ for user in num_friends_ranking:
     print(f"  {user['name']} has {user['num_friends']} friends")
 
 # Suggest new friends based on friends of friends
+
+friend_of_friend_suggestions = defaultdict(list)
+
+for user in users:
+
+    user_friends = [friendships[i][1] 
+                    for i in range(len(friendships))
+                    if friendships[i][0] == user['id']] \
+                        + \
+                    [friendships[i][0]
+                    for i in range(len(friendships))
+                    if friendships[i][1] == user['id']]
+    
+    not_fof = [user['id']] + user_friends
+    
+    fof = [friendships[i][1] 
+           for i in range(len(friendships))
+           if friendships[i][0] in user_friends and
+           friendships[i][1] not in not_fof] \
+                + \
+          [friendships[i][0]
+           for i in range(len(friendships))
+           if friendships[i][1] in user_friends and
+           friendships[i][0] not in not_fof]
+    
+    friend_of_friend_suggestions[user['id']] = set(fof)
+
+print('Friend of friend suggestions:', friend_of_friend_suggestions)
+
+# How many friends in common do the users have?
+
 
